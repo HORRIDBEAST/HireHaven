@@ -54,6 +54,18 @@ const Header = () => {
             Post a Job
           </Link>
         </li>
+        <li>
+    <Link
+      href={"/review"}
+      className={`py-2 px-4 rounded-md text-xl transition-all duration-200 ease-in-out ${
+        pathname === "/review"
+          ? "text-[#7263F3] border-[#7263F3] border bg-[#7263F3]/10"
+          : "hover:text-[#7263F3] hover:border-[#7263F3] hover:border hover:bg-[#7263F3]/10"
+      }`}
+    >
+      Reviews
+    </Link>
+  </li>
       </ul>
       <div className="flex items-center gap-4">
       {isAuthenticated ? (

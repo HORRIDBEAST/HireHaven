@@ -51,6 +51,7 @@ useEffect(()=>{
 
 const createJob=async(jobdata)=>{
     try {
+        console.log(jobdata);
         const res=await axios.post("/jobs",jobdata);
         setJobs((prevJobs) => [res.data, ...prevJobs]);
         toast.success("Job Created Successfully");

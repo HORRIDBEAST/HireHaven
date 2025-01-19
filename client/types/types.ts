@@ -19,4 +19,21 @@ interface Job {
     createdAt: string;
     updatedAt: string;
   }
-  export type { Job };
+
+  interface Review {
+    _id: string;
+    job: {
+      title: string;
+    };
+    review: string;
+    role: string;
+    name: string;
+    rating: number;
+    user: {
+      name: string;
+      profilePicture: string;
+      _id: string;
+      role: string;
+    }
+  }
+  export type { Job,Review };

@@ -1,9 +1,49 @@
 const User = require('../models/userModel');
+const {Mistral} = require("@mistralai/mistralai");
 
-
+const axios = require('axios');
 const asyncHandler = require('express-async-handler');
 const Job = require('../models/jobModel');
+require('dotenv').config();
 
+const mistral = new Mistral({
+    apiKey: process.env.MISTRAL_AI_API_KEY, // Make sure to set this in your .env file
+  });
+
+const generateJobDescription = asyncHandler(async (req, res) => {
+    try {
+        const { title, employmentType, skills, tags, location, salary, prompt } = req.body;
+
+        // Prepare data for Mistral AI
+        const aiInput = {
+            job_title: title,
+            employment_type: employmentType,
+            skills: skills,
+            tags: tags,
+            location: location.address || location.country || location.city,
+            salary: salary,
+            prompt: prompt
+        };
+        if (!process.env.MISTRAL_AI_API_KEY) {
+            throw new Error("API_KEY is not defined in the environment variables.");
+          }
+        const response =await mistral.chat.complete(
+            {
+                model: 'mistral-small-latest',
+                messages: [{ 
+                    role: 'user', 
+                    content: `Generate a job description based on the following details: Title: ${title}, Employment Type: ${employmentType}, Skills: ${skills.join(", ")}, Tags: ${tags.join(", ")}, Location: ${location.address || location.country || location.city}, Salary: ${salary}.
+                    Generate in a  pointwise format, without any bullet points or symbols, and ensure clarity in each point` 
+                  }], 
+            },
+            );
+            res.status(200).json({ message: 'Job pointwise description generated successfully' , data:response.choices[0].message.content});
+
+        } catch (error) {
+            console.error('Error generating job description:', error);
+            res.status(500).json({ error: 'Failed to generate job description' });
+        }
+    });
 const createJob=asyncHandler(async(req,res)=>{
     try {
         const user=await User.findOne({auth0Id: req.oidc.user.sub});
@@ -226,4 +266,4 @@ const deleteJob=asyncHandler(async(req,res)=>{
             message:"Internal Server Error",
         })
 }})
-module.exports={createJob,getJob,getJobByUser,searchJobs ,applyJob,likeJob,getJobById,deleteJob};
+module.exports={createJob,generateJobDescription,getJob,getJobByUser,searchJobs ,applyJob,likeJob,getJobById,deleteJob};

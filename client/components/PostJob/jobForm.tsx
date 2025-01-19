@@ -8,9 +8,10 @@ import JobLocation from "./jobLocation";
 import JobSalary from "./jobSalary";
 import JobSummary from "./jobSummary";
 import { usejobsContext } from "@/context/jobsContext";
-
+import { useRouter } from "next/navigation";
 const JobForm = () => {
-    const sections = ["About","Job Details",  "Skills", "Location", "Salary","Summary"];
+    const router=useRouter();
+    const sections = ["About",  "Skills", "Location", "Salary","Job Details","Summary"];
     const [activeSection, setActiveSection] = useState("About");
     const {
         jobTitle,
@@ -50,14 +51,15 @@ const JobForm = () => {
             switch(activeSection){
                 case "About":
                     return <JobAbout/>
-                case "Job Details":
-                    return <JobDetails/>
+               
                 case "Skills":
                     return <JobSkills/>
                 case "Location":
                     return <JobLocation/>
                 case "Salary":
                     return <JobSalary/>
+                    case "Job Details":
+                      return <JobDetails/>
                 case "Summary":
                     return <JobSummary/>
             }
@@ -86,7 +88,9 @@ const JobForm = () => {
         }
           */
         const handleSubmit=(e:React.FormEvent)=>{
+          
             e.preventDefault();
+            //console.log(propObject);
             createJob(propObject);
             resetJobForm();
         };
@@ -124,7 +128,7 @@ const JobForm = () => {
             <form
               action=""
               className="p-6 flex-1 bg-white rounded-lg self-start"
-              onSubmit={handleSubmit}
+             onSubmit={handleSubmit}
             >
               {renderStages()}
       
@@ -146,7 +150,9 @@ const JobForm = () => {
                 {activeSection === "Summary" && (
                   <button
                     type="submit"
-                    className="self-end px-6 py-2 bg-[#7263F3] text-white rounded-md"
+                    className="self-end px-6 py-2 bg-[#7263F3] text-white rounded-md" onClick={()=>{
+                      //router.push("http://localhost:3001/findwork")
+                    }}
                   >
                     Post Job
                   </button>

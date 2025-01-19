@@ -1,5 +1,5 @@
 const express=require("express");
-const { createJob, getJob ,getJobByUser,searchJobs,applyJob,likeJob,getJobById,deleteJob} = require("../controllers/jobController");
+const { createJob, getJob ,getJobByUser,searchJobs,applyJob,likeJob,getJobById,deleteJob,generateJobDescription} = require("../controllers/jobController");
 const protect = require("../middleware/protect");
 const router=express.Router();
 
@@ -21,6 +21,10 @@ router.get("/jobs/:id" ,protect,getJobById);
 
 //delete particullar job
 router.delete("/jobs/:id" ,protect,deleteJob);
+
+//AI job description generation
+router.post("/jobs/generate-description", protect, generateJobDescription);
+
 
 
 module.exports=router;

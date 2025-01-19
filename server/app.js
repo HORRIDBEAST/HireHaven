@@ -16,15 +16,20 @@ const User  = require("./models/userModel");
 const config = {
   authRequired: false,
   auth0Logout: true,
-  secret: process.env.secret_key,
+  secret: process.env.SECRET,
   baseURL: process.env.BASE_URL,
   clientID: process.env.client_id,
   issuerBaseURL: process.env.issuer_Base_Url,
   routes:{
     postLogoutRedirect: process.env.CLIENT_URL,
+    callback: "/callback",
+    logout: "/logout",
+    login: "/login",
   }
 };
-
+app.use(express.json());
+app.use(cookieParser());
+app.use(express.urlencoded({extended :true}));
 app.use(auth(config));
 
 //function to check  if user exists in db
@@ -70,9 +75,7 @@ app.get('/', async (req, res) => {
     origin: process.env.CLIENT_URL,
     credentials:true,
 }));
-app.use(express.json());
-app.use(cookieParser());
-app.use(express.urlencoded({extended :true}));
+
 //routes
 const routeFiles = fs.readdirSync("./routes"); // List all files in the 'routes' directory
 routeFiles.forEach((file) => {
