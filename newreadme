@@ -1,0 +1,5 @@
+HireHaven- An AI-based Job Portal
+a)Developed a fully functional AI-powered job portal featuring four core functionalities: Job Creation, Job Search,
+b)Job Management, and Review System, enabling efficient job matching.– :Integrated Generative AI using the Mistral 7B AI model, streamlining the process of job description creation,
+c)saving 35% of time previously spent on manual input.– :Implemented an AI-based Interview System that automatically generates interview questions and evaluates responses for over 100 different job roles, reducing hiring time.– :Employed Auth0 for secure user authentication, ensuring a safe and personalized experience for both job seekers
+ and recruiters.
