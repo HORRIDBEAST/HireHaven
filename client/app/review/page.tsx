@@ -47,17 +47,23 @@ const Page = () => {
 
   return (
     <div
-      className="p-6 flex flex-col items-center min-h-screen bg-cover bg-center"
+      className="p-6 flex flex-col items-center min-h-screen bg-cover bg-center bg-fixed"
       style={{ backgroundImage: "url('/bg.jpg')" }}
     >
       {/* Optional Overlay */}
-      <div className="absolute inset-0 bg-black bg-opacity-50 z-0"></div>
+      <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-50 z-0"></div>
 
       <div className="relative z-10 w-full flex flex-col items-center">
         <div className="mb-6 text-center flex justify-end items-center w-full">
           <h1 className="text-4xl font-bold mb-4 flex-grow text-center text-white">
             See All Reviews
           </h1>
+          {/* <Button
+            
+            className="bg-purple-600 hover:bg-blue-600 text-white mr-4"
+          >
+            See my Reviews
+          </Button> */}
           <Button
             onClick={handleCreateReview}
             className="bg-purple-600 hover:bg-blue-600 text-white"
@@ -84,11 +90,11 @@ const Page = () => {
                       className="w-10 h-10 rounded-full mr-3"
                     />
                     <CardTitle className="text-lg font-bold hover:underline">
-                      {r.name || r.user.name}
+                      {r.name || r.user?.name}
                     </CardTitle>
                   </div>
                   <CardDescription className="text-white font-bold text-lg">
-                    Role: {r.role} <br /> Applied for {r.job.title}
+                    Role: {r.role} <br /> Applied for {r.job?.title}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>

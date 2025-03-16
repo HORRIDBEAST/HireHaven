@@ -1,6 +1,6 @@
 const protect = (req, res, next) => {
-    console.log("Auth state:", req.oidc.isAuthenticated());
-    console.log("User info:", req.oidc.user);
+    // console.log("Auth state:", req.oidc.isAuthenticated());
+    // console.log("User info:", req.oidc.user);
         if (req.oidc.isAuthenticated()) {
             next();
         } else {

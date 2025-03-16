@@ -57,7 +57,8 @@ const CreateReviewPage = () => {
 
   return (
     <section className="relative flex flex-wrap lg:h-screen lg:items-center">
-      <div className="w-full px-4 py-12 sm:px-6 sm:py-16 lg:w-1/2 lg:px-8 lg:py-24">
+      <div className="w-full px-4 border-gray-500 border-b py-12 sm:px-6 sm:py-16 lg:w-1/2 lg:px-8 lg:py-24">
+        {/* <div className="w-fit h-fit border-2 border-blue-300"> */}
         <div className="mx-auto max-w-lg text-center">
           <h1 className="text-2xl font-bold sm:text-3xl">Create a Review</h1>
           <p className="mt-4 text-gray-500">
@@ -65,9 +66,9 @@ const CreateReviewPage = () => {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="mx-auto mb-0 mt-8 max-w-md space-y-4">
+        <form onSubmit={handleSubmit} className="mx-auto mb-0 mt-8 max-w-md space-y-4 " >
           {/* Name Field */}
-          <div>
+          <div className="border-b border-gray-500">
             <label htmlFor="name" className="sr-only">Name</label>
             <div className="relative">
               <input
@@ -75,7 +76,7 @@ const CreateReviewPage = () => {
                 id="name"
                 value={name}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
-                className="w-full rounded-lg border-gray-700 p-4 text-sm shadow-sm"
+                className="w-full rounded-lg border-gray-700 border-2 p-4 text-sm shadow-sm"
                 placeholder="Your Name"
               />
             </div>
@@ -85,14 +86,17 @@ const CreateReviewPage = () => {
           <div>
             <label htmlFor="role" className="sr-only">Role</label>
             <div className="relative">
-              <input
-                type="text"
-                id="role"
-                value={role}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setRole(e.target.value)}
-                className="w-full rounded-lg border-gray-700 p-4 text-sm shadow-sm"
-                placeholder="Your Role"
-              />
+            <select
+      id="role"
+      aria-placeholder="Select Your Role"
+      value={role}
+      onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setRole(e.target.value)}
+      className="w-full rounded-lg border-gray-700 p-4 text-sm shadow-sm"
+    >
+      <option value="" disabled>Select Your Role</option>
+      <option value="Jobseeker">Jobseeker</option>
+      <option value="Recruiter">Recruiter</option>
+    </select>
             </div>
           </div>
 
@@ -164,12 +168,12 @@ const CreateReviewPage = () => {
           </div>
         </form>
       </div>
-
+            
       {/* Background Image */}
       <div className="relative h-64 w-full sm:h-96 lg:h-full lg:w-1/2">
         <img
           alt="Review Background"
-          src="Invaluable%20Image.jpg" // Update to the appropriate path for the image
+          src="/asach.jpg" // Update to the appropriate path for the image
           className="absolute inset-0 h-full w-full object-cover"
         />
       </div>

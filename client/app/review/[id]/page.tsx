@@ -9,10 +9,8 @@ import { Review } from "@/types/types";
 import { useParams } from "next/navigation";
 const ReviewDetailPage = () => {
   const { reviews } = useReviewContext();
- // const router = useRouter();
   const { id } = useParams(); // Dynamic route parameter
   const [review, setReview] = useState<Review|null>(null);
-    // const {query} = useRouter();
     const {getReview_ById} = useReviewContext();
   useEffect(() => {
     console.log("Routed is +",id);
@@ -25,7 +23,6 @@ const ReviewDetailPage = () => {
           if (selectedReview) {
             setReview(selectedReview);
           } else {
-            // Fetch the review from the backend if not found in state
             const fetchedReview = await getReview_ById(id);
             if (fetchedReview) {
               setReview(fetchedReview);

@@ -4,49 +4,7 @@ const Job = require("../models/jobModel");
 const axios = require('axios');
 const asyncHandler = require('express-async-handler');
 
-// const post_Review = asyncHandler(async (req, res) => {
-//         //console.log(objectId(req.oidc.user.id));
-//             const user = await User.findById(req.oidc.user.id);
 
-//     const isAuth=req.oidc.isAuthenticated() || user.email;
-
-//         if(!isAuth){
-//             return res.status(401).json({message:"Not Authuriszed"});
-//         }
-//         const { review, rating, jobId ,role} = req.body;
-//      try{
-//         const job = await Job.findById(jobId);
-//         if (!job) {
-//             return res.status(404).json({ message: "Job not found" });
-//         }
-    
-//         if (!user) {
-//             return res.status(404).json({ message: "User not found" });
-//         }
-    
-//         const reviewData = {
-//             review,
-//             rating,
-//             user: req.user.id,
-//             job: jobId,
-//             role,
-//             createdAt: Date.now(),
-//         };
-    
-//         const newReview = await Review.create(reviewData);
-    
-//         // job.reviews.push(newReview._id);
-//         // await job.save();
-    
-//         res.status(201).json(newReview);
-//      }
-//      catch(error){
-//         console.log("Error in apply job + "+error.message);
-//         return res.status(500).json({
-//             message:"Internal Server Error",
-//         })
-//      }
-//     });
 
 const post_Review = asyncHandler(async (req, res) => {
     try {

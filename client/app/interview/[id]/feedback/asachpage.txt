@@ -1,0 +1,108 @@
+"use client";
+import React, { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { useGlobalContext } from "@/context/globalContext";
+import { Button } from "@/components/ui/button";
+import {
+  Collapsible,
+  CollapsibleTrigger,
+  CollapsibleContent,
+} from "@/components/ui/collapsible";
+import axios from "axios";
+
+interface UserAnswer {
+  _id: string;
+  name: string;
+  mockIdRef: string;
+  question: string;
+  correctAns: string;
+  userAns: string;
+  feedback: string;
+  rating: number;
+  userEmail: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const Feedback = () => {
+  const { userProfile } = useGlobalContext();
+  const router = useRouter();
+  const params = useParams();
+  const [feedbackList, setFeedbackList] = useState<UserAnswer[]>([]);
+
+  const getFeedback = async () => {
+    try {
+      const response = await axios.get(`/interview/feedback/${params.id}`, {
+        withCredentials: true,
+      });
+      setFeedbackList(response.data);
+    } catch (error) {
+      console.error("Error fetching feedback:", error);
+      setFeedbackList([]);
+    }
+  };
+
+  useEffect(() => {
+    if (params.id) {
+      getFeedback();
+    }
+  }, [params.id]);
+
+  // Calculate average rating
+  const totalRating =
+    feedbackList.length > 0
+      ? feedbackList.reduce((sum, item) => sum + item.rating, 0) / feedbackList.length
+      : 0;
+
+  return (
+    <div className="p-10">
+      {feedbackList.length === 0 ? (
+        <h2 className="text-red-600 text-2xl font-bold">No Interview Record Found</h2>
+      ) : (
+        <>
+          <h1 className="text-3xl font-serif font-bold text-orange-800">
+            Congrats {userProfile?.name || "User"}
+          </h1>
+          <h2 className="text-blue-700 text-2xl font-bold">Here is your Interview Feedback</h2>
+          <h2 className="text-gray-950 my-3 text-xl">
+            Your Overall Rating is: {totalRating.toFixed(2)}
+          </h2>
+          <h3 className="text-md text-gray-600">
+            Here are your Interview Questions, Correct Answers, Your Answers, and Feedback
+          </h3>
+
+          <div>
+            {feedbackList.map((item) => (
+              <div key={item._id} className="my-5 border rounded-lg p-5">
+                <Collapsible className="mt-3">
+                  <CollapsibleTrigger className="p-2 bg-secondary rounded-lg my-4 text-left w-full">
+                    {item.question}
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <div className="flex flex-col gap-3">
+                      <h2 className="my-2 border rounded-lg text-red-700">
+                        <strong>Rating: {item.rating}</strong>
+                      </h2>
+                      <h2 className="p-2 border rounded-lg text-sm text-red-800 bg-red-100">
+                        <strong>Your Answer: {item.userAns}</strong>
+                      </h2>
+                      <h2 className="p-2 border rounded-lg text-sm text-purple-900 bg-green-100">
+                        <strong>Correct Answer: {item.correctAns}</strong>
+                      </h2>
+                      <h2 className="p-2 border rounded-lg text-sm text-blue-900 bg-blue-100">
+                        <strong>Feedback: {item.feedback}</strong>
+                      </h2>
+                    </div>
+                  </CollapsibleContent>
+                </Collapsible>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+      <Button onClick={() => router.push("/interview")}>Go Home</Button>
+    </div>
+  );
+};
+
+export default Feedback;

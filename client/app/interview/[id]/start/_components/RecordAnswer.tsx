@@ -1,0 +1,199 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useInterviewContext } from "../../../../../context/interviewContext";
+import { Mic } from "lucide-react";
+import { toast } from "react-hot-toast";
+import { useGlobalContext } from "@/context/globalContext";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import "regenerator-runtime/runtime";
+import SpeechRecognition, { useSpeechRecognition } from "react-speech-recognition";
+import { Interview, Question } from "@/types/types";
+
+interface RecordAnswerProps {
+  mockQuestions: Question[];
+  activeQIndex: number;
+  interviewData: Interview;
+  answeredQuestions: boolean[];
+  onAnswerSaved: (nextIndex: number) => void;
+}
+const RecordAnswer = ({ mockQuestions, activeQIndex, interviewData, answeredQuestions, onAnswerSaved }: RecordAnswerProps) => {
+    const [isRecording, setIsRecording] = useState(false);
+    const [userAnswer, setUserAnswer] = useState("");
+    const [recognition, setRecognition] = useState(null);
+    const [loading, setLoading] = useState(false);
+    
+    const router = useRouter();
+    const { setInterviewData, saveUserAnswer } = useInterviewContext();
+    const { userProfile } = useGlobalContext();
+
+    const {
+        transcript,
+        listening,
+        resetTranscript,
+        browserSupportsSpeechRecognition,
+      } = useSpeechRecognition();
+    // Filter repeating text function
+    const filterRepeatingText = (newText: string, prevText: string) => {
+        const prevWords = prevText.split(' ');
+        const newWords = newText.split(' ');
+
+        let filteredText = '';
+        let isDuplicate = false;
+
+        for (let i = 0; i < newWords.length; i++) {
+            if (prevWords[prevWords.length - 1] === newWords[i] && !isDuplicate) {
+                isDuplicate = true;
+                continue;
+            }
+            filteredText += newWords[i] + ' ';
+        }
+
+        return filteredText.trim();
+    };
+
+    // Initialize Speech Recognition
+    // useEffect(() => {
+    //     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+        
+    //     if (!SpeechRecognition) {
+    //       toast.error("Speech Recognition API is not supported in this browser.");
+    //       return;
+    //     }
+    
+    //     const recognitionInstance = new SpeechRecognition();
+    //     recognitionInstance.continuous = true;
+    //     recognitionInstance.interimResults = true;
+        
+    //     recognitionInstance.onresult = (event) => {
+    //       let transcript = '';
+    //       for (let i = event.resultIndex; i < event.results.length; i++) {
+    //         transcript = event.results[i][0].transcript;
+            
+    //       }
+    //       setUserAnswer((prevAnswer) => filterRepeatingText(transcript, prevAnswer));
+    //     };
+        
+    //     recognitionInstance.onerror = (event) => {
+    //       console.error('Speech recognition error:', event.error);
+    //       if (event.error === 'network') {
+    //         toast.error('Network issue. Please check your internet connection and try again.');
+    //       } else {
+    //         toast.error('An error occurred with speech recognition.');
+    //       }
+    //     //   toast.error('An error occurred with speech recognition.');
+    //     };
+    
+    //     setRecognition(recognitionInstance);
+    //     // navigator.mediaDevices.getUserMedia({ audio: true })
+    //     // .then(() => console.log('Microphone access granted'))
+    //     // .catch((err) => {
+    //     //     console.error('Microphone permission denied', err);
+    //     //     toast.error('Microphone access is required for speech recognition.');
+    //     // });
+    // }, []);
+    
+    useEffect(() => {
+        setIsRecording(listening);
+      }, [listening]);
+
+      useEffect(() => {
+        resetTranscript();
+      },[activeQIndex]);
+    if (!browserSupportsSpeechRecognition) {
+        toast.error("Speech recognition is not supported in this browser.");
+        return (
+          <div className="flex flex-col items-center justify-center">
+            <p>Browser doesn't support speech recognition.</p>
+          </div>
+        );
+      }
+
+    const startRecording = () => {
+        if (!isRecording) {
+          console.log("Starting recording...");
+          resetTranscript(); // Clear previous transcript
+          SpeechRecognition.startListening({ continuous: true, interimResults: true });
+          toast.success("Recording started...");
+        }
+      };
+
+      const stopRecording = () => {
+        if (isRecording) {
+          SpeechRecognition.stopListening();
+          toast.success("Recording stopped.");
+        }
+      };
+
+    const saveUserAnswerLocal = async () => {
+      if (answeredQuestions[activeQIndex]) return; // Prevent re-answering the same question
+        try {
+            if (!isRecording) {
+                startRecording();
+            } else {
+                setLoading(true);
+                
+                console.log("Saving answer:", userAnswer);
+                stopRecording();
+                
+                const AnswerData={
+                    name: userProfile?.name || "User",
+                    mockIdRef: interviewData.mockId || "",
+                    question: mockQuestions[activeQIndex]?.question || "",
+                    correctAns: mockQuestions[activeQIndex]?.answer || "",
+                    userAns: transcript || "",
+                    
+                    userEmail: userProfile?.email || "",
+                }
+                //!name || !mockIdRef || !question || !correctAns || !userAns || !rating || !feedback || !userEmail
+               // console.log();
+             await saveUserAnswer(AnswerData);
+                resetTranscript()
+                //toast.success("Answer saved successfully!");
+                setUserAnswer("");
+                setLoading(false);
+                if (activeQIndex < mockQuestions.length - 1) {
+                  onAnswerSaved(activeQIndex + 1);
+                }
+            }
+        } catch (error) {
+            toast.error("Error saving answer.");
+            console.error(error);
+            setLoading(false);
+        }
+    };
+
+    return (
+      <div className="flex flex-col items-center justify-center">
+        <div className="flex flex-col items-center justify-center my-8 mx-3 h-[400px] bg-black w-full p-5">
+          <Image src="/webcam.png" alt="Logo" width={200} height={200} className="absolute" />
+        </div>
+  
+        {!answeredQuestions[activeQIndex] ? (
+          <div className="flex items-center gap-5">
+            <Button
+              className="bg-slate-400 text-blue-700 rounded-full"
+              onClick={saveUserAnswerLocal}
+              disabled={loading}
+            >
+              {isRecording ? (
+                <h2 className="text-red-600 flex gap-2">
+                  <Mic /> Stop Recording...
+                </h2>
+              ) : (
+                "Start Recording"
+              )}
+            </Button>
+          </div>
+        ) : (
+          <p className="text-gray-600">Answer recorded. Please proceed to the next question.</p>
+        )}
+        <div className="mt-4">{transcript}</div>
+      </div>
+    );
+  };
+  
+  export default RecordAnswer;

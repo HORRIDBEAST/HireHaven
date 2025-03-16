@@ -1,0 +1,27 @@
+"use client";
+import React from "react";
+import { useRouter } from "next/navigation";
+import { useGlobalContext } from "@/context/globalContext";
+import { useInterviewContext } from "@/context/interviewContext";
+import InterviewItemCard from "./InterviewItemCard";
+import { Interview } from "@/types/types";
+
+const InterviewList: React.FC = () => {
+  const router = useRouter();
+  const { userProfile, getUserProfile } = useGlobalContext();
+  const { interviews, setInterviews } = useInterviewContext();
+
+  return (
+    <div>
+      <h1 className="text-3xl font-serif font-bold text-orange-800">Interview List</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 my-4">
+        {interviews &&
+          interviews.map((item: Interview, index: number) => (
+            <InterviewItemCard item={item} key={index} />
+          ))}
+      </div>
+    </div>
+  );
+};
+
+export default InterviewList;
